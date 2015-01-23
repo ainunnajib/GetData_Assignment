@@ -1,4 +1,5 @@
 library(dplyr)
+library(tidyr)
 
 #read and merge rows of subject records
 subjects <- rbind(
@@ -16,9 +17,8 @@ subjects.activities <- cbind(subjects, activities)
 
 #measurements & features labels
 measurements <- rbind(
-  read.fwf("test/X_test.txt", rep(16, 561), header = FALSE, n = 3000), 
-  read.fwf("train/X_train.txt", rep(16, 561), header = FALSE, n = 7500)
-  )
+  read.table("test/X_test.txt"),
+  read.table("train/X_train.txt"))
 
 features <- read.csv("features.txt", header = FALSE, sep = " ")
 features <- features %>% mutate(V2 = gsub('\\(\\)', '', V2))
@@ -35,4 +35,10 @@ subjects.activities <- cbind(subjects.activities, mean.std)
 activity.labels <- read.csv("activity_labels.txt", header = FALSE, sep = " ")
 names(activity.labels) <- c("activityCode", "activity")
 subjects.activities <- merge(subjects.activities, activity.labels, by = "activityCode", sort = FALSE)
-subjects.activities <- subjects.activities %>% select(-activityCode)
+dataset <- subjects.activities %>% select(subject, activity, matches('mean|std'))
+
+#create tidy data
+tidydata <- dataset %>% gather(feature, measurement, 3:81)
+#write to text file
+write.table(tidydata, "tidydata.txt")
+
