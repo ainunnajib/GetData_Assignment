@@ -38,7 +38,8 @@ subjects.activities <- merge(subjects.activities, activity.labels, by = "activit
 dataset <- subjects.activities %>% select(subject, activity, matches('mean|std'))
 
 #create tidy data
-tidydata <- dataset %>% gather(feature, measurement, 3:81)
+tidydata <- dataset %>% group_by(subject, activity)
+tidydata <- summarise_each(tidydata, funs(mean))
 #write to text file
-write.table(tidydata, "tidydata.txt")
+write.table(tidydata, "tidydata.txt", quote = FALSE, sep = ",")
 
