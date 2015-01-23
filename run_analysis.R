@@ -41,5 +41,5 @@ dataset <- subjects.activities %>% select(subject, activity, matches('mean|std')
 tidydata <- dataset %>% group_by(subject, activity)
 tidydata <- summarise_each(tidydata, funs(mean))
 #write to text file
-write.table(tidydata, "tidydata.txt", quote = FALSE, sep = ",")
+write.table(tidydata, "tidydata.txt", quote = FALSE, sep = ",", row.names = FALSE)
 
